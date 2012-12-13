@@ -1,0 +1,5 @@
+[
+    {   "caption": "Gem Browser: List Gems",
+        "command": "list_gems"
+    }
+]
