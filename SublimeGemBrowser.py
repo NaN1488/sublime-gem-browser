@@ -6,6 +6,7 @@ import functools
 import os.path
 import time
 import re
+import sys
 
 class ListGemsCommand(sublime_plugin.WindowCommand):
     """
@@ -34,4 +35,21 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
       bashCommand = "bundle show " + self.gem_list[picked]
       process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
       output = process.communicate()[0]
-      print output
+      self.sublime_command_line(['-n', output.rstrip()]) 
+
+    def get_sublime_path(self):
+        if sublime.platform() == 'osx':
+            return '/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl'
+        if sublime.platform() == 'linux':
+            return open('/proc/self/cmdline').read().split(chr(0))[0]
+        return sys.executable
+
+    def sublime_command_line(self, args):
+        args.insert(0, self.get_sublime_path())
+        print args
+        return subprocess.Popen(args)
+
+
+
+
+
