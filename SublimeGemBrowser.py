@@ -31,4 +31,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(self.gem_list, self.on_done)
 
     def on_done(self, picked):
-      print 'Ok'
+      bashCommand = "bundle show " + self.gem_list[picked]
+      process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+      output = process.communicate()[0]
+      print output
