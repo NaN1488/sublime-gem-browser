@@ -1,0 +1,16 @@
+[
+    {
+        "caption": "Tools",
+        "mnemonic": "T",
+        "id": "tools",
+        "children":
+        [
+            {
+                "caption": "Gem Browser",
+                "mnemonic": "B",
+                "id": "gem-browser",
+                "command": "gem_list"
+            }
+        ]
+    }
+]
