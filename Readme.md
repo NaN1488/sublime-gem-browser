@@ -1,4 +1,4 @@
-# Sublime Gem Browser
+# Sublime Gem Browser 0.1-alpha
 
 For Ruby projects using the Bundler gem.
 
@@ -9,6 +9,7 @@ This plugin allows you to quickly access the code of a gem that you have install
 * It requires an open file in your current project
 * The way to open the gem folder is limited to standard OS X Sublime Text 2 installation paths (we'll need to improve this)
 * Only tested on Rails 3+ and Bundler 1.0+
+* Sublime Text 2 has to be open from a console
 
 ## License
 * MIT License
