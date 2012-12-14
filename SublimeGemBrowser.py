@@ -31,11 +31,11 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(self.gem_list, self.on_done)
 
     def on_done(self, picked):
-      if self.gem_list[picked] != self.GEMS_NOT_FOUND:
-          gem_name = re.search(self.PATTERN_GEM_NAME,self.gem_list[picked]).group(1)
-          bashCommand = "bundle show " + gem_name
-          output = self.rvm_subprocess(bashCommand)
-          self.sublime_command_line(['-n', output.rstrip()]) 
+        if self.gem_list[picked] != self.GEMS_NOT_FOUND and picked != -1:
+            gem_name = re.search(self.PATTERN_GEM_NAME,self.gem_list[picked]).group(1)
+            bashCommand = "bundle show " + gem_name
+            output = self.rvm_subprocess(bashCommand)
+            self.sublime_command_line(['-n', output.rstrip()]) 
 
     def get_sublime_path(self):
         if sublime.platform() == 'osx':
@@ -48,7 +48,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
        
         executable = self.rvm_shell_path()
         if executable != False:
-            current_path = os.path.dirname(self.window.active_view().file_name())
+            current_path = self.window.folders()[0]
             args = 'cd ' + current_path + ';' + args
             process = subprocess.Popen(args, stdout=subprocess.PIPE, shell=True, executable= executable)
             return process.communicate()[0]
