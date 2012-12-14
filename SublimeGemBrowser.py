@@ -16,7 +16,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     def run(self):
         os.chdir(os.path.dirname(self.window.active_view().file_name()))
         bashCommand = "bundle list "
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE, shell=True)
         output = process.communicate()[0]
         output = output.split('\n')
         gems = []
@@ -33,7 +33,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
 
     def on_done(self, picked):
       bashCommand = "bundle show " + self.gem_list[picked]
-      process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+      process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE,shell=True)
       output = process.communicate()[0]
       self.sublime_command_line(['-n', output.rstrip()]) 
 
