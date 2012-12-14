@@ -32,8 +32,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     def on_done(self, picked):
       if self.gem_list[picked] != self.GEMS_NOT_FOUND:
           bashCommand = "bundle show " + self.gem_list[picked]
-          process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE,shell=True)
-          output = process.communicate()[0]
+          output = self.rvm_subprocess(bashCommand)
           self.sublime_command_line(['-n', output.rstrip()]) 
 
     def get_sublime_path(self):
@@ -44,17 +43,24 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         return sys.executable
 
     def rvm_subprocess(self, args):
-        user = subprocess.Popen('whoami', stdout=subprocess.PIPE, shell=True)
-        user = user.communicate()[0].rsplit()[0]
-        current_path = os.path.dirname(self.window.active_view().file_name())
-        executable = '/Users/'+ user + '/.rvm/bin/rvm-shell'
-        args = 'cd ' + current_path + ';' + args
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, shell=True, executable= executable)
-        return process.communicate()[0]
+       
+        executable = self.rvm_shell_path()
+        if executable != False:
+            current_path = os.path.dirname(self.window.active_view().file_name())
+            args = 'cd ' + current_path + ';' + args
+            process = subprocess.Popen(args, stdout=subprocess.PIPE, shell=True, executable= executable)
+            return process.communicate()[0]
+
+    #return rvm shell path or False
+    def rvm_shell_path(self):
+        rvm_shell = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
+        rvm_shell_path = rvm_shell.communicate()[0].rsplit()[0]
+        if rvm_shell_path != '':
+            return rvm_shell_path.split('\n')[0]
+        return False
 
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
-        print args
         return subprocess.Popen(args)
 
 
