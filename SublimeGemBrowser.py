@@ -15,7 +15,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     GEMS_NOT_FOUND = 'Gems Not Found'
     
     def run(self):        
-        output = self.rvm_subprocess("bundle list")
+        output = self.ruby_environment_subprocess("bundle list")
         if output != None:
           gems = []
           for line in output.split('\n'):
@@ -34,7 +34,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         if self.gem_list[picked] != self.GEMS_NOT_FOUND and picked != -1:
             gem_name = re.search(self.PATTERN_GEM_NAME,self.gem_list[picked]).group(1)
             bashCommand = "bundle show " + gem_name
-            output = self.rvm_subprocess(bashCommand)
+            output = self.ruby_environment_subprocess(bashCommand)
             self.sublime_command_line(['-n', output.rstrip()]) 
 
     def get_sublime_path(self):
@@ -44,7 +44,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
             return open('/proc/self/cmdline').read().split(chr(0))[0]
         return sys.executable
 
-    def rvm_subprocess(self, args):
+    def ruby_environment_subprocess(self, args):
        
         executable = self.ruby_environment()
         if executable != False:
@@ -55,11 +55,17 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
 
     #return rvm shell path or False
     def ruby_environment(self):
-        rvm_shell = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
-        rvm_shell_path = rvm_shell.communicate()[0]
+        # Search for RVM
+        shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
+        rvm_shell_path = shell_process.communicate()[0]
         if rvm_shell_path != '':
             return rvm_shell_path.rsplit()[0].split('\n')[0]
-        return False
+        else: #Search  for rbenv
+          shell_process = subprocess.Popen('if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi', stdout=subprocess.PIPE, shell=True)
+          rbenv_shell_path = shell_process.communicate()[0]
+          if rbenv_shell_path != '':
+            return rbenv_shell_path.rsplit()[0].split('\n')[0]
+          return False
 
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
