@@ -1,10 +1,8 @@
 import os
+import os.path
 import sublime
 import sublime_plugin
 import subprocess
-import functools
-import os.path
-import time
 import re
 import sys
 
