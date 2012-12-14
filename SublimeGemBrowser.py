@@ -30,7 +30,8 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
           self.gem_list = gems
           self.window.show_quick_panel(self.gem_list, self.on_done)
         else:
-          print 'Error getting the output, the shell could probably not be loaded.'
+          sublime.error_message('Error getting the output, the shell could probably not be loaded or There are no Gemfile in this project.')
+    
     def on_done(self, picked):
         if self.gem_list[picked] != self.GEMS_NOT_FOUND and picked != -1:
             gem_name = re.search(self.PATTERN_GEM_NAME,self.gem_list[picked]).group(1)
