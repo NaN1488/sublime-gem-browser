@@ -5,6 +5,7 @@ import sublime_plugin
 import subprocess
 import re
 import sys
+import fnmatch
 
 class ListGemsCommand(sublime_plugin.WindowCommand):
     """
@@ -46,7 +47,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
        
         executable = self.rvm_shell_path()
         if executable != False:
-            current_path = self.window.folders()[0]
+            current_path = self.gemfile_folder()
             args = 'cd ' + current_path + ';' + args
             process = subprocess.Popen(args, stdout=subprocess.PIPE, shell=True, executable= executable)
             return process.communicate()[0]
@@ -62,6 +63,16 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
         return subprocess.Popen(args)
+    def gemfile_folder(self):
+        root = self.window.folders()[0]
+        matches = []
+        for root, dirnames, filenames in os.walk(root):
+            for filename in fnmatch.filter(filenames, 'Gemfile'):
+                matches.append(os.path.join(root, filename))
+                break
+        return os.path.dirname(matches[0])
+
+
 
 
 
