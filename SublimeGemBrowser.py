@@ -12,7 +12,8 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     """
     A command that shows a list of all installed gems (by bundle list command)
     """
-    
+    PATTERN_GEM = "\* (.+) \("
+    GEMS_NOT_FOUND = 'Gems Not Found'
     def run(self):
         os.chdir(os.path.dirname(self.window.active_view().file_name()))
         bashCommand = "bundle list "
@@ -21,21 +22,22 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         output = output.split('\n')
         gems = []
         for line in output:
-            gem_name = re.search("\* (.+) \(", line)
+            gem_name = re.search(self.PATTERN_GEM, line)
             if gem_name != None:
                 gems.append(gem_name.group(1))
 
         if gems == []:
-            gems.append('Gems Not Found')
+            gems.append(self.GEMS_NOT_FOUND)
         
         self.gem_list = gems
         self.window.show_quick_panel(self.gem_list, self.on_done)
 
     def on_done(self, picked):
-      bashCommand = "bundle show " + self.gem_list[picked]
-      process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE,shell=True)
-      output = process.communicate()[0]
-      self.sublime_command_line(['-n', output.rstrip()]) 
+      if self.gem_list[picked] != self.GEMS_NOT_FOUND:
+          bashCommand = "bundle show " + self.gem_list[picked]
+          process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE,shell=True)
+          output = process.communicate()[0]
+          self.sublime_command_line(['-n', output.rstrip()]) 
 
     def get_sublime_path(self):
         if sublime.platform() == 'osx':
