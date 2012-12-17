@@ -53,7 +53,8 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
 
         # Search for RVM
         shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
-        rvm_executable = shell_process.communicate()[0]
+        rvm_executable = shell_process.communicate()[0].rstrip()
+        
         if rvm_executable != '':
             process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, executable= rvm_executable)
             return process.communicate()[0]
