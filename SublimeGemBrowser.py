@@ -16,7 +16,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     GEMS_NOT_FOUND = 'Gems Not Found'
     
     def run(self):        
-        output = self.ruby_environment_subprocess("bundle list")
+        output = self.run_subprocess("bundle list")
         if output != None:
           gems = []
           for line in output.split('\n'):
@@ -35,8 +35,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     def on_done(self, picked):
         if self.gem_list[picked] != self.GEMS_NOT_FOUND and picked != -1:
             gem_name = re.search(self.PATTERN_GEM_NAME,self.gem_list[picked]).group(1)
-            bashCommand = "bundle show " + gem_name
-            output = self.ruby_environment_subprocess(bashCommand)
+            output = self.run_subprocess("bundle show " + gem_name)
             if output != None:
                 self.sublime_command_line(['-n', output.rstrip()]) 
 
@@ -47,32 +46,30 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
             return open('/proc/self/cmdline').read().split(chr(0))[0]
         return sys.executable
 
-    def ruby_environment_subprocess(self, args):
-       
-        executable = self.ruby_environment()
+    def run_subprocess(self, command):
         current_path = self.gemfile_folder()
-        if executable != False and current_path != None:
-            args = 'cd ' + current_path + ';' + args
-            process = subprocess.Popen(args, stdout=subprocess.PIPE, shell=True, executable= executable)
-            return process.communicate()[0]
-        return None
-    #return rvm shell path or False
-    def ruby_environment(self):
+        if current_path == None: return None
+        command = 'cd ' + current_path + ';' + command
+
         # Search for RVM
         shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
-        rvm_shell_path = shell_process.communicate()[0]
-        if rvm_shell_path != '':
-            return rvm_shell_path.rsplit()[0].split('\n')[0]
-        else: #Search  for rbenv
-          shell_process = subprocess.Popen('if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi', stdout=subprocess.PIPE, shell=True)
-          rbenv_shell_path = shell_process.communicate()[0]
-          if rbenv_shell_path != '':
-            return rbenv_shell_path.rsplit()[0].split('\n')[0]
-          return False
+        rvm_executable = shell_process.communicate()[0]
+        if rvm_executable != '':
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, executable= rvm_executable)
+            return process.communicate()[0]
+        else: #Search for rbenv
+            command = 'export PATH="$HOME/.rbenv/bin:$PATH";if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi;' + command
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+            output = process.communicate()[0]
+            if command != '':
+              return output
+            else:
+              return None
 
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
         return subprocess.Popen(args)
+
     def gemfile_folder(self):
         root = self.window.folders()[0]
         matches = []
