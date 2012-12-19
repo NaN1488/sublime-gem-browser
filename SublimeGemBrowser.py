@@ -49,24 +49,26 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
     def run_subprocess(self, command):
         current_path = self.gemfile_folder()
         if current_path == None: return None
-        command = 'cd ' + current_path + ';' + command
+        command_with_cd = 'cd ' + current_path + ' && ' + command
 
         # Search for RVM
         shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-shell ]; then echo $HOME/.rvm/bin/rvm-shell; fi", stdout=subprocess.PIPE, shell=True)
         rvm_executable = shell_process.communicate()[0].rstrip()
         
         if rvm_executable != '':
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True, executable= rvm_executable)
+            process = subprocess.Popen(command_with_cd, stdout=subprocess.PIPE, shell=True, executable= rvm_executable)
             return process.communicate()[0]
         else: #Search for rbenv
-            command = 'export PATH="$HOME/.rbenv/bin:$PATH";if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi;' + command
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+            rbenv_command = 'export PATH="$HOME/.rbenv/bin:$PATH";if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi;' + command_with_cd
+            process = subprocess.Popen(rbenv_command, stdout=subprocess.PIPE, shell=True)
             output = process.communicate()[0]
-            if command != '':
+            if output != '':
               return output
-            else:
-              return None
-
+            else: # Try for a windows output
+              process = subprocess.Popen(command_with_cd, stdout=subprocess.PIPE, shell=True)
+              output = process.communicate()[0]
+              if output != '':
+                  return output
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
         return subprocess.Popen(args)
