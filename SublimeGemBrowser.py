@@ -59,7 +59,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
             process = subprocess.Popen(command_with_cd, stdout=subprocess.PIPE, shell=True, executable= rvm_executable)
             return process.communicate()[0]
         else: #Search for rbenv
-            rbenv_command = 'export PATH="$HOME/.rbenv/bin:$PATH";if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi;' + command_with_cd
+            rbenv_command = 'cd ' + current_path + ' && ~/.rbenv/shims/' + command
             process = subprocess.Popen(rbenv_command, stdout=subprocess.PIPE, shell=True)
             output = process.communicate()[0]
             if output != '':
