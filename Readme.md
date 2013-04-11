@@ -1,4 +1,4 @@
-# Sublime Gem Browser 0.1-alpha
+# Sublime Gem Browser 0.2-alpha
 
 For Ruby projects using the Bundler gem.
 
@@ -36,6 +36,7 @@ Type "gem browser" and enter. All done!
 ## Known issues / limitations
 * Only tested on Rails 3+ and Bundler 1.0+
 * Doesn't work with projects that use rvm gemsets (yet)
+* Experimental support for Sublime Text 3 (Only in OS X with RVM)
 
 ## License
 * MIT License
