@@ -3,6 +3,7 @@ import os.path
 import sublime
 import sublime_plugin
 import subprocess
+import pipes
 import re
 import sys
 import fnmatch
@@ -78,7 +79,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         return sys.executable
 
     def run_subprocess(self, command):
-        current_path = self.gemfile_folder()
+        current_path = pipes.quote(self.gemfile_folder())
         if current_path == None: return None
         command_with_cd = 'cd ' + current_path + ' && ' + command
 
