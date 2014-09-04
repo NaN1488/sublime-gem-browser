@@ -33,6 +33,15 @@ Type "gem browser" and enter. All done!
   git clone https://github.com/NaN1488/sublime-gem-browser.git
 ```
 
+### Sublime Text 3 (Mac OS X only)
+```bash
+  cd "/Applications/Sublime Text.app/Contents/MacOS/Packages"
+  curl https://github.com/NaN1488/sublime-gem-browser/archive/master.zip -o sublime-gem-browser.sublime-package
+  zip -j -r sublime-gem-browser.sublime-package sublime-gem-browser/*
+  rm -rf sublime-gem-browser
+```
+
+
 ## Known issues / limitations
 * Experimental support for Sublime Text 3 (Only in OS X with RVM)
 
