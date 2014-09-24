@@ -16,9 +16,9 @@ Tested on OSX with RVM, Xubuntu with rbenv and Windows with RubyInstaller
 
 ### Package Control
 Using [Package Control](http://wbond.net/sublime_packages/package_control), a
-package manager for Sublime Text 2.
+package manager for Sublime Text.
 
-In ST2, press "cmd + shift + p" and then type "install".
+In ST, press "cmd + shift + p" and then type "install".
 
 Once you see "Package Control: Install Package", press enter.
 
@@ -26,7 +26,7 @@ When the packages load, another selection window will appear.
 
 Type "gem browser" and enter. All done!
 
-### Manual Installation
+### Manual Installation for Sublime Text 2
 
 ```bash
   cd "~/Library/Application Support/Sublime Text 2/Packages/"
