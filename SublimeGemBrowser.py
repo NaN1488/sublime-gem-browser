@@ -3,6 +3,7 @@ import os.path
 import sublime
 import sublime_plugin
 import subprocess
+import pipes
 import re
 import sys
 import fnmatch
@@ -78,7 +79,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         return sys.executable
 
     def run_subprocess(self, command):
-        current_path = self.gemfile_folder()
+        current_path = pipes.quote(self.gemfile_folder())
         if current_path == None: return None
         command_with_cd = 'cd ' + current_path + ' && ' + command
 
@@ -86,20 +87,20 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-auto-ruby ]; then echo $HOME/.rvm/bin/rvm-auto-ruby; fi", stdout=subprocess.PIPE, shell=True)
         rvm_executable = shell_process.communicate()[0].rstrip()
         
-        if rvm_executable != '':
+        if rvm_executable != b'':
             rvm_command = 'cd ' + current_path + ' && $HOME/.rvm/bin/rvm-auto-ruby -S ' + command
             process = subprocess.Popen(rvm_command, stdout=subprocess.PIPE, shell=True)
             return process.communicate()[0]
         else: #Search for rbenv
-            rbenv_command = 'cd ' + current_path + ' && ~/.rbenv/shims/' + command
-            process = subprocess.Popen(rbenv_command, stdout=subprocess.PIPE, shell=True)
+            rbenv_command = os.path.expanduser('~/.rbenv/shims/' + command)
+            process = subprocess.Popen(rbenv_command.split(), cwd=current_path, stdout=subprocess.PIPE)
             output = process.communicate()[0]
-            if output != '':
+            if output != b'':
               return output
             else: # Try for a windows output
               process = subprocess.Popen(command_with_cd, stdout=subprocess.PIPE, shell=True)
               output = process.communicate()[0]
-              if output != '':
+              if output != b'':
                   return output
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())

@@ -6,7 +6,7 @@ This plugin allows you to quickly access the code of a gem that you have install
 
 Tested on OSX with RVM, Xubuntu with rbenv and Windows with RubyInstaller
 # How to Use
-* In ST2, press "cmd + shift + p" and type "list gem"
+* In ST2, press "cmd + shift + p" and type "list gem" (or ctrl + shift + p if you're on Windows or Linux)
 * Once you see "Gem Browser: List Gems", press enter.
 * It will list all the gems that have been installed via bundle for the project folder 
   ![ScreenShot](https://dl.dropbox.com/u/1252099/semi-permanent/gembrowser.png)
@@ -32,6 +32,15 @@ Type "gem browser" and enter. All done!
   cd "~/Library/Application Support/Sublime Text 2/Packages/"
   git clone https://github.com/NaN1488/sublime-gem-browser.git
 ```
+
+### Sublime Text 3 (Mac OS X only)
+```bash
+  cd "/Applications/Sublime Text.app/Contents/MacOS/Packages"
+  curl https://github.com/NaN1488/sublime-gem-browser/archive/master.zip -o sublime-gem-browser.sublime-package
+  zip -j -r sublime-gem-browser.sublime-package sublime-gem-browser/*
+  rm -rf sublime-gem-browser
+```
+
 
 ## Known issues / limitations
 * Experimental support for Sublime Text 3 (Only in OS X with RVM)
