@@ -87,7 +87,7 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
         shell_process = subprocess.Popen(" if [ -f $HOME/.rvm/bin/rvm-auto-ruby ]; then echo $HOME/.rvm/bin/rvm-auto-ruby; fi", stdout=subprocess.PIPE, shell=True)
         rvm_executable = shell_process.communicate()[0].rstrip()
         
-        if rvm_executable != '':
+        if rvm_executable != b'':
             rvm_command = 'cd ' + current_path + ' && $HOME/.rvm/bin/rvm-auto-ruby -S ' + command
             process = subprocess.Popen(rvm_command, stdout=subprocess.PIPE, shell=True)
             return process.communicate()[0]
