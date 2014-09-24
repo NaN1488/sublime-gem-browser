@@ -92,15 +92,15 @@ class ListGemsCommand(sublime_plugin.WindowCommand):
             process = subprocess.Popen(rvm_command, stdout=subprocess.PIPE, shell=True)
             return process.communicate()[0]
         else: #Search for rbenv
-            rbenv_command = 'cd ' + current_path + ' && ~/.rbenv/shims/' + command
-            process = subprocess.Popen(rbenv_command, stdout=subprocess.PIPE, shell=True)
+            rbenv_command = os.path.expanduser('~/.rbenv/shims/' + command)
+            process = subprocess.Popen(rbenv_command.split(), cwd=current_path, stdout=subprocess.PIPE)
             output = process.communicate()[0]
-            if output != '':
+            if output != b'':
               return output
             else: # Try for a windows output
               process = subprocess.Popen(command_with_cd, stdout=subprocess.PIPE, shell=True)
               output = process.communicate()[0]
-              if output != '':
+              if output != b'':
                   return output
     def sublime_command_line(self, args):
         args.insert(0, self.get_sublime_path())
